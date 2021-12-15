@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #a9b7c6;}
+.s3 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+README.md</font>
+</center></td></tr></table>
+<pre><span class="s0"># </span><span class="s2">Search Engine with Web Analytics - skeleton project</span>
+<span class="s0"># </span><span class="s2">IRWA Final Project</span>
+
+<span class="s2">This projects contains the startup Flask files for developing a web application.</span>
+
+<span class="s0">## </span><span class="s2">Starting the Web App</span>
+
+<span class="s3">```bash</span>
+<span class="s3">python -V</span>
+<span class="s3"># Make sure we use Python 3</span>
+
+<span class="s3">python web_app.py</span>
+<span class="s3">```</span>
+<span class="s2">The above will start a web server with the application</span><span class="s1">:</span>
+<span class="s3">```</span>
+ <span class="s3">* Serving Flask app 'web-app' (lazy loading)</span>
+ <span class="s3">* Environment: production</span>
+   <span class="s3">WARNING: This is a development server. Do not use it in a production deployment.</span>
+   <span class="s3">Use a production WSGI server instead.</span>
+ <span class="s3">* Debug mode: off</span>
+ <span class="s3">* Running on http://127.0.0.1:8088/ (Press CTRL+C to quit)</span>
+<span class="s3">```</span>
+
+<span class="s0">## </span><span class="s2">Virtualenv for the project </span><span class="s1">(</span><span class="s2">first time use</span><span class="s1">)</span>
+<span class="s0">### </span><span class="s2">Install virtualenv</span>
+<span class="s2">Having different version of libraries for different projects.  </span>
+<span class="s2">Solves the elevated privilege issue as virtualenv allows you to install with user permission.</span>
+
+<span class="s2">In the project root directory execute</span><span class="s1">:</span>
+<span class="s3">```bash</span>
+<span class="s3">pip3 install virtualenv</span>
+<span class="s3">virtualenv --version</span>
+<span class="s3">```</span>
+<span class="s2">virtualenv 20.10.0</span>
+
+<span class="s0">### </span><span class="s2">Prepare virtualenv for the project</span>
+<span class="s2">In the root of the project folder run</span><span class="s1">:</span>
+<span class="s3">```bash</span>
+<span class="s3">virtualenv .</span>
+<span class="s3">```</span>
+
+<span class="s2">If you list the contents of the project root directory, you will see that it has created several sub-directories, including a bin folder </span><span class="s1">(</span><span class="s2">Scripts on Windows</span><span class="s1">) </span><span class="s2">that contains copies of both Python and pip. Also, a lib folder will be created by this action.</span>
+
+<span class="s2">The next step is to activate your new virtualenv for the project</span><span class="s1">:</span>
+<span class="s3">```bash</span>
+<span class="s3">source bin/activate</span>
+<span class="s3">```</span>
+<span class="s2">This will load the python virtualenv for the project.</span>
+
+<span class="s0">### </span><span class="s2">Installing Flask and other packages in your virtualenv</span>
+<span class="s3">```bash</span>
+<span class="s3">pip install Flask pandas nltk faker</span>
+<span class="s3">```</span>
+
+<span class="s2">Enjoy</span><span class="s1">!</span>
+
+</pre>
+</body>
+</html>

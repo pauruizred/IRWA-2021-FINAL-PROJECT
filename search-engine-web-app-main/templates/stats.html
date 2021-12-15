@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block content %}
+    <h2>Quick Stats</h2>
+    <h4>User:</h4>
+    {% for user in users %}
+        <div class="pb-3">
+            <div class="">
+                <h6 style="font-weight: bold">IP: {{ user.ip }} </h6>
+                <span class="text-dark" > INFO: {{ user.info }} </span>
+            </div>
+        </div>
+    <hr>
+    {% endfor %}
+    <h4>Clicked docs:</h4>
+    {% for doc in clicks_data %}
+        <div class="pb-3">
+            <div class="">
+                <span class="text-dark" style="font-weight: bold" > ({{ doc.count }} visits) </span> — id: {{ doc.id }} — {{ doc.description }}
+            </div>
+        </div>
+    {% endfor %}
+    <hr>
+    <h4>Terms:</h4>
+    {% for term in terms %}
+        <div class="pb-3">
+            <div class="">
+                <span class="text-dark" style="font-weight: bold"> ({{ term.count }} visits) </span> — term: {{ term.term }}
+                — last search:{{ term.last }} - avg length query:{{ term.maxlength }}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

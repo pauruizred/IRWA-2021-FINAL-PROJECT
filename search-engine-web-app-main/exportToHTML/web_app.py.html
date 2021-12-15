@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>web_app.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+.s5 { color: #629755; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+web_app.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">nltk</span>
+<span class="s0">from </span><span class="s1">flask </span><span class="s0">import </span><span class="s1">Flask</span><span class="s0">, </span><span class="s1">render_template</span>
+<span class="s0">from </span><span class="s1">flask </span><span class="s0">import </span><span class="s1">request</span>
+
+<span class="s0">from </span><span class="s1">app.analytics.analytics_data </span><span class="s0">import </span><span class="s1">AnalyticsData</span><span class="s0">, </span><span class="s1">ClickedDoc</span>
+<span class="s0">from </span><span class="s1">app.core </span><span class="s0">import </span><span class="s1">utils</span>
+<span class="s0">from </span><span class="s1">app.search_engine.search_engine </span><span class="s0">import </span><span class="s1">SearchEngine</span>
+<span class="s0">import </span><span class="s1">httpagentparser</span>
+
+<span class="s1">app = Flask(__name__)</span>
+
+<span class="s1">searchEngine = SearchEngine()</span>
+<span class="s1">analytics_data = AnalyticsData()</span>
+<span class="s1">corpus = utils.load_documents_corpus()</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/'</span><span class="s1">)</span>
+<span class="s0">def </span><span class="s1">search_form():</span>
+
+    <span class="s1">user_agent = request.headers.get(</span><span class="s2">'User-Agent'</span><span class="s1">)</span>
+    <span class="s1">print(</span><span class="s2">'Raw User Agent'</span><span class="s0">, </span><span class="s1">user_agent)</span>
+    <span class="s1">user_ip = request.remote_addr</span>
+
+    <span class="s1">agent = httpagentparser.detect(user_agent)</span>
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'index.html'</span><span class="s0">, </span><span class="s1">page_title=</span><span class="s2">&quot;Welcome&quot;</span><span class="s1">)</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/search'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">search_form_post():</span>
+    <span class="s1">search_query = request.form[</span><span class="s2">'search-query'</span><span class="s1">]</span>
+
+    <span class="s1">results = searchEngine.search(search_query)</span>
+    <span class="s1">found_count = len(results)</span>
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'results.html'</span><span class="s0">, </span><span class="s1">results_list=results</span><span class="s0">, </span><span class="s1">page_title=</span><span class="s2">&quot;Results&quot;</span><span class="s0">, </span><span class="s1">found_counter=found_count)</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/doc_details'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'GET'</span><span class="s0">, </span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">doc_details():</span>
+    <span class="s3"># getting request parameters:</span>
+    <span class="s3"># user = request.args.get('user')</span>
+
+    <span class="s1">id = int(request.args.get(</span><span class="s2">'id'</span><span class="s1">))</span>
+    <span class="s1">date = request.args.get(</span><span class="s2">'date'</span><span class="s1">)</span>
+    <span class="s1">title = request.args.get(</span><span class="s2">'title'</span><span class="s1">)</span>
+    <span class="s1">clicked_doc_id = int(request.args.get(</span><span class="s2">'id'</span><span class="s1">))</span>
+
+    <span class="s0">if </span><span class="s1">clicked_doc_id </span><span class="s0">in </span><span class="s1">analytics_data.fact_clicks.keys():</span>
+        <span class="s1">doc_counter = analytics_data.fact_clicks[clicked_doc_id]</span>
+        <span class="s1">analytics_data.fact_clicks[clicked_doc_id] = doc_counter + </span><span class="s4">1</span>
+    <span class="s0">else</span><span class="s1">:</span>
+        <span class="s1">analytics_data.fact_clicks[clicked_doc_id] = </span><span class="s4">1</span>
+    <span class="s1">analytics_data.fact_clicks.append(Click(clicked_doc_id</span><span class="s0">, </span><span class="s2">&quot;some desc&quot;</span><span class="s1">))</span>
+    <span class="s1">print(</span><span class="s2">&quot;click in id={} - fact_clicks len: {}&quot;</span><span class="s1">.format(clicked_doc_id</span><span class="s0">, </span><span class="s1">len(analytics_data.fact_clicks)))</span>
+
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'doc_details.html'</span><span class="s0">, </span><span class="s1">id = id</span><span class="s0">, </span><span class="s1">date = date</span><span class="s0">, </span><span class="s1">title = title)</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/stats'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'GET'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">stats():</span>
+    <span class="s5">&quot;&quot;&quot; 
+    Show simple statistics example. ### Replace with dashboard ### 
+    :return: 
+    &quot;&quot;&quot;</span>
+    <span class="s3">### Start replace with your code ###</span>
+    <span class="s1">docs = []</span>
+    <span class="s0">for </span><span class="s1">clk </span><span class="s0">in </span><span class="s1">analytics_data.fact_clicks:</span>
+        <span class="s1">docs.append((corpus[clk.doc_id]))</span>
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'stats.html'</span><span class="s0">, </span><span class="s1">clicks_data=docs)</span>
+    <span class="s3">### End replace with your code ###</span>
+
+<span class="s1">@app.route(</span><span class="s2">'/dashboard'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'GET'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">dashboard():</span>
+    <span class="s5">&quot;&quot;&quot; 
+    Show simple statistics example. ### Replace with dashboard ### 
+    :return: 
+    &quot;&quot;&quot;</span>
+    <span class="s3">### Start replace with your code ###</span>
+    <span class="s1">visited_docs = []</span>
+    <span class="s0">for </span><span class="s1">clk </span><span class="s0">in </span><span class="s1">analytics_data.fact_clicks:</span>
+        <span class="s1">doc = ClickedDoc(clk</span><span class="s0">, </span><span class="s1">corpus[clk.key].Tweet</span><span class="s0">, </span><span class="s1">clk.value)</span>
+        <span class="s1">visited_docs.append((corpus[clk.doc_id]))</span>
+
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'dashboard.html'</span><span class="s0">, </span><span class="s1">visited_docs=visited_docs)</span>
+    <span class="s3">### End replace with your code ###</span>
+
+<span class="s1">@app.route(</span><span class="s2">'/sentiment'</span><span class="s1">)</span>
+<span class="s0">def </span><span class="s1">sentiment_form():</span>
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'sentiment.html'</span><span class="s1">)</span>
+
+
+<span class="s1">@app.route(</span><span class="s2">'/sentiment'</span><span class="s0">, </span><span class="s1">methods=[</span><span class="s2">'POST'</span><span class="s1">])</span>
+<span class="s0">def </span><span class="s1">sentiment_form_post():</span>
+    <span class="s1">text = request.form[</span><span class="s2">'text'</span><span class="s1">]</span>
+    <span class="s1">nltk.download(</span><span class="s2">'vader_lexicon'</span><span class="s1">)</span>
+    <span class="s0">from </span><span class="s1">nltk.sentiment.vader </span><span class="s0">import </span><span class="s1">SentimentIntensityAnalyzer</span>
+    <span class="s1">sid = SentimentIntensityAnalyzer()</span>
+    <span class="s1">score = ((sid.polarity_scores(str(text)))[</span><span class="s2">'compound'</span><span class="s1">])</span>
+    <span class="s0">return </span><span class="s1">render_template(</span><span class="s2">'sentiment.html'</span><span class="s0">, </span><span class="s1">score=score)</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s2">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">app.run(port=</span><span class="s2">&quot;8088&quot;</span><span class="s0">, </span><span class="s1">host=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="s0">, </span><span class="s1">threaded=</span><span class="s0">False, </span><span class="s1">debug=</span><span class="s0">True</span><span class="s1">)</span>
+</pre>
+</body>
+</html>
